@@ -13,7 +13,7 @@
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn flat color="orange">Share</v-btn>
+            <v-btn flat color="orange" @click="passDialogEdit(article)">Edit</v-btn>
             <v-btn flat color="orange">Delete</v-btn>
           </v-card-actions>
         </v-card>
@@ -24,6 +24,18 @@
 <script>
 export default {
     props: ["article"],
+    methods: {
+        passDialogEdit (article) {
+            this.dialogEdit = true
+            this.$emit('dialog-edit',this.dialogEdit)
+            this.$emit('obj-article',article)
+        }
+    },
+    data(){
+        return{
+            dialogEdit: false
+        }
+    }
 }
 </script>
 

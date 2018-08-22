@@ -10,10 +10,11 @@
           <Sidebar v-on:id-article="getId"></Sidebar>
         </v-flex>
         <v-flex xs8>
-          <Mainbar v-bind:article="article"></Mainbar>
+          <Mainbar v-bind:article="article" v-on:dialog-edit="editDialog" v-on:obj-article="editArticle"></Mainbar>
         </v-flex>
       </v-layout>
     </v-container>
+    <Edit v-bind:statusDialogEdit="statusDialogEdit" v-on:close-dialogEdit="closeEdit" v-bind:dataEdit="dataEdit"></Edit>
   </div>
 </template>
 
@@ -24,17 +25,20 @@ import Register from '@/components/Register.vue'
 import Article from '@/components/AddArticle.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import Mainbar from '@/components/Mainbar.vue'
+import Edit from '@/components/Edit.vue'
 export default {
   data () {
     return {
       statusDialog: '',
       statusDialogRegist: '',
       statusDialogArticle: '',
-      article: ''
+      statusDialogEdit: '',
+      article: '',
+      dataEdit: {}
     }
   },
   components: {
-    Navbar, Login, Register, Article, Sidebar, Mainbar
+    Navbar, Login, Register, Article, Sidebar, Mainbar, Edit
   },
   methods: {
     login (status) {
@@ -57,6 +61,15 @@ export default {
     },
     getId(idArticle){
       this.article =  idArticle
+    },
+    editDialog(status){
+      this.statusDialogEdit = status
+    },
+    closeEdit () {
+      this.statusDialogEdit = false
+    },
+    editArticle (obj) {
+      this.dataEdit = obj
     }
   },
   mounted () {

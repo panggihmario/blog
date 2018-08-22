@@ -1,5 +1,4 @@
 <template>
-     
           <div
       id="e3"
       style="max-width: 400px; margin: auto;"
@@ -16,7 +15,6 @@
           <i class="fas fa-utensils fa-2x"></i>
         </v-btn>
       </v-toolbar>
-  
       <v-card>
         <v-container
           fluid
@@ -34,7 +32,6 @@
                 </v-card-actions>
               </v-card>
             </v-flex>
-  
             <v-flex xs12>
               <v-card color="white" class="white--text">
                 <v-layout>
@@ -69,7 +66,6 @@
                     ></v-card-media>
                   </v-flex>
                 </v-layout>
-                
                 <v-divider light></v-divider>
                 <v-card-actions class="pa-3">
                   Rate this album
@@ -82,7 +78,6 @@
                 </v-card-actions>
               </v-card>
             </v-flex>
-  
             <v-flex xs12>
               <v-card color="white" class="black--text">
                 <v-layout row>
@@ -92,19 +87,15 @@
                         <v-list-tile v-for="(article,index) in articles" :key=index>
                             <v-list-tile-content>
                                 <v-list-tile-title>
-                                   
                                     <router-link :to="{name: 'article'}" @click.native="idArticle(article)"> {{article.title}}</router-link>
                                 </v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
-                       
                       </div>
                     </v-card-title>
                   </v-flex>
-               
                 </v-layout>
-                <v-divider light></v-divider>
-              
+                <v-divider light></v-divider> 
               </v-card>
             </v-flex>
           </v-layout>
@@ -121,20 +112,20 @@ export default {
             articles: []
         }
     },
-    methods: {
-        allArticle(){
-            axios.get('http://localhost:3000/article/allArticle')
-            .then(allData=>{
-                this.articles = allData.data
-            })
-        },
-        idArticle(id){
-            this.$emit('id-article',id)
-        }
+  methods: {
+    allArticle(){
+        axios.get('http://localhost:3000/article/allArticle')
+        .then(allData=>{
+            this.articles = allData.data
+        })
     },
-    mounted(){
-        this.allArticle()
+    idArticle(id){
+        this.$emit('id-article',id)
     }
+},
+  mounted () {
+    this.allArticle()
+  }
 }
 </script>
 
