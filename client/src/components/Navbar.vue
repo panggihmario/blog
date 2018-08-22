@@ -4,7 +4,7 @@
       <v-toolbar-title>Title</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn flat >Add Article</v-btn>
+        <v-btn flat v-on:click="passDialogArticle">Add Article</v-btn>
         <v-btn flat v-on:click="passDialog">Logins</v-btn>
         <v-btn flat v-on:click="passDialogRegist">Register</v-btn>
       </v-toolbar-items>
@@ -16,7 +16,8 @@ export default {
   data () {
     return {
       dialog: false,
-      dialogRegist: false
+      dialogRegist: false,
+      dialogArticle: false
     }
   },
   methods: {
@@ -27,6 +28,10 @@ export default {
     passDialogRegist () {
       this.dialogRegist = true
       this.$emit('register', this.dialogRegist)
+    },
+    passDialogArticle () {
+      this.dialogArticle = true
+      this.$emit('dialog-article', this.dialogArticle)
     }
   }
 }

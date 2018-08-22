@@ -26,6 +26,18 @@ class Controller{
         })
     }
 
+    static getOneArticle(req,res){
+        Article.find({
+            _id: req.params.id
+        })
+        .then(article=>{
+            res.status(200).json(article)
+        })
+        .catch(err=>{
+            res.status(400).json(err)
+        })
+    }
+
     static editArticle(req,res){
         Article.updateOne({
             _id : req.params.id

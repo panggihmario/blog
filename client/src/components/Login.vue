@@ -49,9 +49,8 @@ export default {
   },
   methods: {
     closeDialog () {
-      if(this.check){
         this.$emit('close-dialog', this.statusDialog)
-      }
+      
     },
     login () {
       axios.post('http://localhost:3000/users/login', {
