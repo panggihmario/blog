@@ -7,10 +7,13 @@
     <v-container fluid>
       <v-layout row>
         <v-flex xs4>
-          <Sidebar v-on:id-article="getId"></Sidebar>
+          <Sidebar v-on:id-article="getId" v-on:reverse-status="reverse"></Sidebar>
         </v-flex>
-        <v-flex xs8>
-          <Mainbar v-bind:article="article" v-on:dialog-edit="editDialog" v-on:obj-article="editArticle"></Mainbar>
+        <v-flex xs8 v-if="statusBarNow">
+          <Mainbar v-bind:article="article" v-on:dialog-edit="editDialog" v-on:obj-article="editArticle" ></Mainbar>
+        </v-flex>
+        <v-flex xs8 v-else>
+          <Carousel></Carousel>
         </v-flex>
       </v-layout>
     </v-container>
@@ -26,6 +29,7 @@ import Article from '@/components/AddArticle.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import Mainbar from '@/components/Mainbar.vue'
 import Edit from '@/components/Edit.vue'
+import Carousel from '@/components/Carousel.vue'
 export default {
   data () {
     return {
@@ -34,11 +38,12 @@ export default {
       statusDialogArticle: '',
       statusDialogEdit: '',
       article: '',
-      dataEdit: {}
+      dataEdit: {},
+      statusBarNow: ''
     }
   },
   components: {
-    Navbar, Login, Register, Article, Sidebar, Mainbar, Edit
+    Navbar, Login, Register, Article, Sidebar, Mainbar, Edit, Carousel
   },
   methods: {
     login (status) {
@@ -70,6 +75,9 @@ export default {
     },
     editArticle (obj) {
       this.dataEdit = obj
+    },
+    reverse (status) {
+      this.statusBarNow = status
     }
   },
   mounted () {

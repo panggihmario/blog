@@ -109,7 +109,8 @@
 export default {
     data(){
         return{
-            articles: []
+            articles: [],
+            statusBar: false
         }
     },
   methods: {
@@ -121,7 +122,10 @@ export default {
     },
     idArticle(id){
         this.$emit('id-article',id)
-    }
+        this.statusBar = true
+        console.log(this.statusBar)
+        this.$emit('reverse-status',this.statusBar)
+    },
 },
   mounted () {
     this.allArticle()

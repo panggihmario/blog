@@ -50,9 +50,20 @@ class Controller{
         })
         .then(dataEdit=>{
             res.json(dataEdit)
-            console.log("=====================",dataEdit)
         })
 
+    }
+
+    static deleteArticle(req,res){
+        Article.deleteOne({
+            _id : req.params.id
+        },function(err,data){
+            if(err){
+                res.status(400).json(err)
+            }else{
+                res.status(200).json(data)
+            }
+        })
     }
 }
 
