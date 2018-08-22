@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+require('dotenv').config()
 var mongoose = require('mongoose');
 
 
@@ -18,7 +18,7 @@ mongoose.connect(MONGO_URI,{ useNewUrlParser: true },function(err){
     console.log(err);
     
   }else{
-    console.log("connected",process.env.NODE_ENV);
+    console.log("connected");
     
   }
 })
@@ -30,7 +30,7 @@ var usersRouter = require('./routes/users');
 var articleRouter = require('./routes/article')
 
 var app = express();
-
+app.use(require('cors')())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
