@@ -32,9 +32,8 @@
                 </v-container>
             </v-list>
             <div>
-                <v-btn color="success" v-on:click="addArticle">Add Blog</v-btn>
+                <v-btn color="success" v-on:click="addArticle" @click.native="closeDialog">Add Blog</v-btn>
             </div>
-         
         </v-card>
       </v-dialog>
     </v-layout>
@@ -42,47 +41,53 @@
 
 <script>
 import wysiwyg from "vue-wysiwyg";
+import router from '../router'
 export default {
-    props: ["statusDialogArticle"],
-    methods: {
-        closeDialog () {
-            this.$emit('close-dialogArticle', this.statusDialogArticle)
-        },
-        addArticle(){
-            let formData = new FormData()
-            formData.append('image',this.url)
-            axios.post('http://localhost:3000/upload',formData)
-            .then(result=>{
-                axios.post('http://localhost:3000/article/addArticle',{
-                    title: this.title,
-                    content: this.content,
-                    url: result.data.link
-                })
-                .then(data=>{
-                    console.log(data);
-                })
-                .catch(err=>{
-                    console.log(err);
-                })
+  props: ["statusDialogArticle","articles"],
+  methods: {
+    closeDialog () {
+        this.$emit('close-dialogArticle', this.statusDialogArticle)
+    },
+    addArticle(){
+        let token = localStorage.getItem('token')
+        let formData = new FormData()
+        formData.append('image',this.url)
+        axios.post('http://localhost:3000/upload',formData)
+        .then(result=>{
+            axios.post('http://localhost:3000/article/addArticle',{
+                title: this.title,
+                content: this.content,
+                url: result.data.link
+            },{
+                headers : {
+                    token: token
+                }
+            })
+            .then(data=>{
+                console.log(data)
+                this.articles
+                this.$emit('data-add',data)
+                router.push('/')
             })
             .catch(err=>{
                 console.log(err);
-                
             })
-        },
-        getImage(link){
-            this.url = link.target.files[0]
-        }
+        })
+        .catch(err=>{
+          console.log(err);
+        })
     },
-    data(){
-        return{
-            title:'',
-            content: '',
-            url: ''
-        }
-    },
-
-
+    getImage(link){
+      this.url = link.target.files[0]
+    }
+  },
+  data(){
+    return{
+      title: '',
+      content: '',
+      url: ''
+    }
+  }
 }
 </script>
 

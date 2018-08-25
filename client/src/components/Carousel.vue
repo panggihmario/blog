@@ -18,16 +18,16 @@ export default {
     return {
       items: [
         {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
+          src: 'http://bakpiajogja.id/wp-content/uploads/2016/12/wisata-malioboro.jpg'
         },
         {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
+          src: 'https://jogjaholidaydriver.files.wordpress.com/2016/08/prambanan_temple_indonesia_original.jpg?w=1632'
         },
         {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
+          src: 'https://indonesia.tripcanvas.co/wp-content/uploads/2017/08/natural-attractions-jogja-feature-1.jpg'
         },
         {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
+          src: 'http://cdn2.tstatic.net/tribunnews/foto/bank/images/hutan-pinus_20160216_132347.jpg'
         }
       ]
     }

@@ -53,7 +53,7 @@
                 <v-layout>
                   <v-flex xs6>
                     <v-card-media
-                      src="http://pengendolan.com/wp-content/uploads/2015/05/jalan-malioboro-salah-satu-spot-wisata-di-Jogja-yang-harus-dikunjungi.jpg"
+                      src="https://bonvoyagejogja.com/wp-content/uploads/2017/04/source.pictaram.com-.jpg"
                       height="125px"
                       contain
                     ></v-card-media>
@@ -87,7 +87,7 @@
                         <v-list-tile v-for="(article,index) in articles" :key=index>
                             <v-list-tile-content>
                                 <v-list-tile-title>
-                                    <router-link :to="{name: 'article'}" @click.native="idArticle(article)"> {{article.title}}</router-link>
+                                  <router-link :to="{name: 'article',params: {id: article.title}}" @click.native="idArticle(article)" class="black--text"> {{article.title}}</router-link>
                                 </v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
@@ -107,29 +107,19 @@
 
 <script>
 export default {
+    props: ["allData","articles"],
     data(){
         return{
-            articles: [],
             statusBar: false
         }
     },
   methods: {
-    allArticle(){
-        axios.get('http://localhost:3000/article/allArticle')
-        .then(allData=>{
-            this.articles = allData.data
-        })
-    },
     idArticle(id){
         this.$emit('id-article',id)
         this.statusBar = true
-        console.log(this.statusBar)
         this.$emit('reverse-status',this.statusBar)
     },
 },
-  mounted () {
-    this.allArticle()
-  }
 }
 </script>
 

@@ -55,6 +55,7 @@ export default {
         },
         editArticle(id){
             // console.log(id);
+            let token = localStorage.getItem('token')
             let formData = new FormData()
             formData.append('image',this.objData.url)
             axios.post('http://localhost:3000/upload',formData)
@@ -63,9 +64,14 @@ export default {
                     title: this.objData.title,
                     content: this.objData.content,
                     url: result.data.link
+                },{
+                    headers : {
+                        token: token
+                    }
                 })
                 .then(data=>{
-                    console.log(data);
+                    console.log(data.config.data);
+                    // this.$emit('obj-edit',data.data)
                 })
                 .catch(err=>{
                     console.log(err);

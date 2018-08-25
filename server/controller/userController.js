@@ -9,30 +9,29 @@ class Controller{
         var salt = bcrypt.genSaltSync(saltRounds);
         var hash = bcrypt.hashSync(req.body.password, salt);
         User.findOne({
-            email : req.body.email
+            email : req.body.email,
+            name : req.body.name,
         })
         .then(data=>{
             if(!data){
                 User.create({
                     name : req.body.name,
                     email : req.body.email,
-                    password : hash
+                    password : hash,
                 })
                 .then(dataUser=>{
-                    console.log(dataUser)
-                    var token = jwt.sign({id:dataUser._id,name:dataUser.name,email:dataUser.email},'easy')
-                    res.json({dataUser,token})
+                    res.status(200).json(dataUser)
                 })
                 .catch(err=>{
-                    res.json(err)
+                    res.status(400).json(err)
                 })
             }
             else{
-                res.status(400).json({msg : 'email has already taken'})
+                res.status(400).json({msg : 'email / name has already taken'})
             }
         })
         .catch(err=>{
-            res.json(err)
+            res.json.status(400).json(err)
         })
         
     }

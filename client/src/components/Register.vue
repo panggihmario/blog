@@ -20,17 +20,26 @@
                 label="E-mail"
                 required
               ></v-text-field>
-              <v-text-field
-                v-model="password"
-                label="Password"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-model="password"
+                  :append-icon="show1 ? 'visibility_off' : 'visibility'"
+                  :rules="[rules.required, rules.min]"
+                  :type="show1 ? 'text' : 'password'"
+                  name="input-10-1"
+                  label="Password"
+                  hint="At least 5 characters"
+                  counter
+                  @click:append="show1 = !show1"
+                ></v-text-field>
             </v-form>
+            <div v-if="!checkRegist" class="red--text">
+              {{errmsg}}
+            </div>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="closeDialog">Close</v-btn>
-            <v-btn color="blue darken-1"      @click.native="closeDialog" v-on:click="register">Save</v-btn>
+            <v-btn color="blue darken-1"       v-on:click="register">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -43,6 +52,8 @@ export default {
   data () {
     return {
       valid: false,
+      checkRegist: false,
+      errmsg: '',
       password: '',
       email: '',
       emailRules: [
@@ -51,9 +62,14 @@ export default {
       ],
       name: '',
       nameRules: [
-      v => !!v || 'Name is required',
-      v => v.length <= 10 || 'Name must be less than 10 characters'
-      ]
+        v => !!v || 'Name is required',
+        v => v.length <= 10 || 'Name must be less than 10 characters'
+      ],
+      rules: {
+        required: value => !!value || 'Required.',
+        min: v => v.length >= 5 || 'Min 5 characters',
+      },
+      show1: false,
     }
   },
   methods: {
@@ -67,9 +83,11 @@ export default {
         password: this.password
       })
       .then(data=>{
-        console.log(data)
+        // this.checkRegist = true
+        this.closeDialog()
       })
       .catch(err=>{
+        this.errmsg = err.response.data.msg
         console.log(err.response)
       })
     }

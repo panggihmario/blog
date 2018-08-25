@@ -1,23 +1,29 @@
 const Article = require('../models/article')
+const jwt = require('jsonwebtoken')
 
 class Controller{
 
     static addArticle(req,res){
+        var decoded = jwt.verify(req.headers.token, 'easy')
         Article.create({
             title : req.body.title,
             content : req.body.content,
-            url : req.body.url
+            url : req.body.url,
+            user : decoded.id
         })
         .then(article=>{
+            console.log(article)
             res.status(200).json(article)
         })
         .catch(err=>{
+            console.log(err)
             res.status(400).json(err)
         })
     }
 
     static getArticle(req,res){
         Article.find({})
+        .populate('user')
         .then(allArticle=>{
             res.status(200).json(allArticle)
         })
