@@ -12,7 +12,6 @@ class Controller{
             user : decoded.id
         })
         .then(article=>{
-            console.log(article)
             res.status(200).json(article)
         })
         .catch(err=>{
@@ -24,6 +23,9 @@ class Controller{
     static getArticle(req,res){
         Article.find({})
         .populate('user')
+        .populate({
+            path:'comment',populate:{path:'user'}
+        })
         .then(allArticle=>{
             res.status(200).json(allArticle)
         })
@@ -61,15 +63,31 @@ class Controller{
     }
 
     static deleteArticle(req,res){
-        Article.deleteOne({
-            _id : req.params.id
-        },function(err,data){
-            if(err){
-                res.status(400).json(err)
-            }else{
-                res.status(200).json(data)
-            }
+        let user = req.user
+        // console.log(user);
+        Article.findOne({
+            _id:req.params.id
         })
+        .then(article=>{
+            console.log(typeof article.user,"=============",typeof user._id);
+            if(String(article.user) === String(user._id)){
+                console.log('tes');
+                
+                Article.deleteOne({
+                    _id : req.params.id
+                },function(err,data){
+                    if(err){
+                        res.status(400).json(err)
+                    }else{
+                        res.status(200).json(data)
+                    }
+                })
+            }else{
+                res.status(400).json({msg:'you are not authorized'})
+            }
+            
+        })
+      
     }
 }
 

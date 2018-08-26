@@ -49,36 +49,12 @@ export default {
         this.$emit('close-dialogArticle', this.statusDialogArticle)
     },
     addArticle(){
-        let token = localStorage.getItem('token')
-        let formData = new FormData()
-        formData.append('image',this.url)
-        axios.post('http://localhost:3000/upload',formData)
-        .then(result=>{
-            axios.post('http://localhost:3000/article/addArticle',{
-                title: this.title,
-                content: this.content,
-                url: result.data.link
-            },{
-                headers : {
-                    token: token
-                }
-            })
-            .then(data=>{
-                console.log(data)
-                this.articles
-                this.$emit('data-add',data)
-                router.push('/')
-            })
-            .catch(err=>{
-                console.log(err);
-            })
-        })
-        .catch(err=>{
-          console.log(err);
-        })
+        this.$emit('item-add',{title:this.title,content:this.content})
+     
     },
     getImage(link){
       this.url = link.target.files[0]
+      this.$emit('url',this.url)
     }
   },
   data(){

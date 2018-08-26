@@ -25,7 +25,8 @@
       v-bind:statusDialogArticle="statusDialogArticle" 
       v-on:close-dialogArticle="closeArticle" 
       v-bind:articles="articles" 
-      v-on:data-add="dataAdd">
+      v-on:item-add="addArticle"
+      v-on:url="getUrl">
     </Article>
     <v-container fluid>
       <v-layout row>
@@ -41,7 +42,10 @@
           <Mainbar
             v-bind:article="article"
             v-on:dialog-edit="editDialog"
-            v-on:obj-article="editArticle">
+            v-on:obj-article="editArticle"
+            v-on:id-delete="deleteArticle"
+            v-on:comment="addComment"
+            v-on:del-comment="deleteComment">
           </Mainbar>
         </v-flex>
         <v-flex xs8 v-else>
@@ -52,7 +56,9 @@
     <Edit 
       v-bind:statusDialogEdit="statusDialogEdit"
       v-on:close-dialogEdit="closeEdit"
-      v-bind:dataEdit="dataEdit">
+      v-bind:dataEdit="dataEdit"
+      v-on:edit-img="getImgEdit"
+      v-on:edit-data="editOldArticle">
     </Edit>
   </main>
   </div>
@@ -80,13 +86,21 @@ export default {
       statusBarNow: '',
       allData: {},
       articles: [],
-      username:''
+      username:'',
+      dataUrl:'',
+      urlEdit:''
     }
   },
   components: {
     Navbar, Login, Register, Article, Sidebar, Mainbar, Edit, Carousel
   },
   methods: {
+     getUrl (data) {
+      this.dataUrl = data
+    },
+    getImgEdit (url) {
+      this.urlEdit = url
+    },
     login (status) {
       this.statusDialog = status
     },
@@ -105,10 +119,10 @@ export default {
     closeArticle () {
       this.statusDialogArticle = false
     },
-    getId(idArticle){
+    getId (idArticle) {
       this.article =  idArticle
     },
-    editDialog(status){
+    editDialog (status) {
       this.statusDialogEdit = status
     },
     closeEdit () {
@@ -120,30 +134,126 @@ export default {
     reverse (status) {
       this.statusBarNow = status
     },
-    dataAdd(data){
-      this.articles.push(data.data)
-    },
-    allArticle(){
+    allArticle () {
       axios.get('http://localhost:3000/article/allArticle')
-      .then(allData=>{
-        console.log(allData.data[0].user)
+      .then(allData => {
+        // console.log(allData.data[0])
           this.articles = allData.data
       })
-      .catch(err=>{
+      .catch(err => {
         console.log(err);
       })
     },
-    checkLogin(status){
+    checkLogin (status) {
       this.statusLogin = status
     },
-    checkLogout(){
+    checkLogout () {
       this.statusLogin = false
     },
-    dataUser(value){
+    dataUser (value) {
       this.username = value
     },
-    resetName(){
+    resetName () {
       this.username = ''
+    },
+    addArticle (value) {
+      let token = localStorage.getItem('token')
+        let formData = new FormData()
+        formData.append('image',this.dataUrl)
+        axios.post('http://localhost:3000/upload', formData)
+        .then(result=>{
+            axios.post('http://localhost:3000/article/addArticle', {
+              title: value.title,
+              content: value.content,
+              url: result.data.link
+            }, {
+              headers: {
+                token: token
+              }
+            })
+            .then(data => {
+                console.log(data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    deleteArticle (value ){
+      let token = localStorage.getItem('token')
+        axios.delete(`http://localhost:3000/article/delete/${value}`, {
+          headers: {
+            token: token
+          }
+        })
+        .then(data=>{
+          console.log(data)
+        })
+        .catch(err=>{
+          console.log(err.response)
+        })
+    },
+    editOldArticle (value) {
+      let token = localStorage.getItem('token')
+      let formData = new FormData()
+      formData.append('image', this.urlEdit)
+      axios.post('http://localhost:3000/upload', formData)
+        .then(result => {
+          axios.put(`http://localhost:3000/article/editArticle/${value.id}`, {
+            title: value.title,
+            content: value.content,
+            url: result.data.link
+          }, {
+            headers: {
+              token: token
+            }
+          })
+            .then(data => {
+              console.log(data)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    addComment (value) {
+      let token = localStorage.getItem('token')
+      axios.post(`http://localhost:3000/article/addComment/${value.id}`,{
+        comment: value.comment
+      },{
+        headers: {
+          token: token
+        }
+      })
+      .then(dataComment=>{
+        this.allArticle()
+        console.log(dataComment);
+      })
+      .catch(err=>{
+        console.log(err.response)
+      })
+    },
+    deleteComment (id) {
+      let token = localStorage.getItem('token')
+      axios.delete(`http://localhost:3000/article/deleteComment/${id}`,{
+        headers: {
+          token: token
+        }
+      })
+      .then(data=>{
+        console.log(data);
+      })
+      .catch(err=>{
+        console.log(err.response);
+        
+      })
+      
     }
   },
   mounted () {
@@ -152,14 +262,10 @@ export default {
     this.closeArticle()
     this.getId()
     this.allArticle()
-    this.dataAdd()
     this.dataUser()
   },
   watch:{
-    articles(newValue, oldValue){
-      console.log("ini watch articles=====>",newValue[0].title);
-      console.log(oldValue);
-    }
+    articles:'allArticle'
   }
 }
 </script>

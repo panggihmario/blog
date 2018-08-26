@@ -52,34 +52,12 @@ export default {
         },
         getImage(link){
             this.objData.url = link.target.files[0]
+            this.$emit('edit-img',this.objData.url)
         },
         editArticle(id){
             // console.log(id);
-            let token = localStorage.getItem('token')
-            let formData = new FormData()
-            formData.append('image',this.objData.url)
-            axios.post('http://localhost:3000/upload',formData)
-            .then(result=>{
-                axios.put(`http://localhost:3000/article/editArticle/${id}`,{
-                    title: this.objData.title,
-                    content: this.objData.content,
-                    url: result.data.link
-                },{
-                    headers : {
-                        token: token
-                    }
-                })
-                .then(data=>{
-                    console.log(data.config.data);
-                    // this.$emit('obj-edit',data.data)
-                })
-                .catch(err=>{
-                    console.log(err);
-                })
-            })
-            .catch(err=>{
-                console.log(err);     
-            })
+            this.$emit('edit-data',{id:id,title:this.objData.title,content:this.objData.content})
+           
             
         }
     },

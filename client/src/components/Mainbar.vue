@@ -18,65 +18,58 @@
                     <v-btn flat color="orange" @click="deleteArticle(article._id)">Delete</v-btn>
                 </v-card-actions>
             </v-card>
-
             <v-container fluid grid-list-md>
                 <v-textarea
                     name="input-7-1"
                     outline
                     label="Comment"
                     auto-grow
+                    v-model="comment"
                 ></v-textarea>
-                <v-btn class="red">Add Comment</v-btn>
+                <v-btn class="red" @click="dataComment(article._id)">Add Comment</v-btn>
             </v-container>
-
-
             <v-layout>
                 <v-flex xs12 >
-                    <v-card>
-                    <v-card-title primary-title>
+                    <v-card v-for="(comment,index) in article.comment" :key=index>
+                    <v-card-title primary-title >
                         <div>
-                        <h3 class="headline mb-0">Kangaroo Valley Safari</h3>
-                        <div>Located two hours south of Sydney in the <br>Southern Highlands of New South Wales, ...</div>
+                        <h3 class="headline mb-0">{{comment.user.name}}</h3>
+                        <div>{{comment.comment}}</div>
+                         <v-btn class="red" @click="delComment(comment._id)">Delete</v-btn>
                         </div>
-                    </v-card-title>
+                    </v-card-title> 
                     </v-card>
                 </v-flex>
             </v-layout>
-
-
         </v-flex>
     </v-layout>
 </template>
 
 <script>
 export default {
-    props: ["article"],
-    methods: {
-        passDialogEdit (article) {
-            this.dialogEdit = true
-            this.$emit('dialog-edit',this.dialogEdit)
-            this.$emit('obj-article',article)
-        },
-        deleteArticle (id) {
-            let token = localStorage.getItem('token')
-            axios.delete(`http://localhost:3000/article/delete/${id}`,{
-                headers : {
-                    token : token
-                }
-            })
-            .then(data=>{
-                console.log(data);
-            })
-            .catch(err=>{
-                console.log(err);
-            })
-        },
+  props: ["article"],
+  methods: {
+    passDialogEdit (article) {
+        this.dialogEdit = true
+        this.$emit('dialog-edit',this.dialogEdit)
+        this.$emit('obj-article',article)
     },
-    data(){
-        return{
-            dialogEdit: false,
-        }
+    deleteArticle (id) {
+        this.$emit('id-delete',id)
+    },
+    dataComment(id){
+      this.$emit('comment',{id:id,comment:this.comment})
+    },
+    delComment(id){
+      this.$emit('del-comment',id)
     }
+  },
+  data(){
+    return{
+        dialogEdit: false,
+        comment:''
+    }
+  }
 }
 </script>
 

@@ -12,7 +12,7 @@ var blogArticle = new Schema({
     },
     comment : [{
         type : Schema.Types.ObjectId,
-        ref : 'User'
+        ref : 'Comment'
     }],
     url :{
         type : String,
