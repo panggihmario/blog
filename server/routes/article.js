@@ -10,6 +10,7 @@ router.get('/allArticle',Article.getArticle)
 router.put('/editArticle/:id',Auth.authorization,Article.editArticle)
 router.get('/getOne/:id',Article.getOneArticle)
 router.delete('/delete/:id',Auth.authorization,Article.deleteArticle)
+router.get('/getOne/:id',Article.getOneArticle)
 
 router.post('/addComment/:id',Auth.authorization,CommentController.addComment)
 router.delete('/deleteComment/:id',Auth.authorization,CommentController.deleteComment)

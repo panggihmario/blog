@@ -5,29 +5,36 @@ const Article = require('../models/article')
 class Controller{
 
     static addComment(req,res){
+
         var decoded = jwt.verify(req.headers.token, 'easy')
-        coModels.create({
-            comment : req.body.comment,
-            user: decoded.id
-        })
-        .then(dataComment=>{
-            Article.findByIdAndUpdate({
-                _id : req.params.id
-            },{
-                $push:{comment :dataComment._id}
+        if(decoded){
+            coModels.create({
+                comment : req.body.comment,
+                user: decoded.id
             })
-            .then(dataArticle=>{
-                console.log(dataArticle)
-                res.status(200).json({msg:'succes',dataArticle})
+            .then(dataComment=>{
+                Article.findByIdAndUpdate({
+                    _id : req.params.id
+                },{
+                    $push:{comment :dataComment._id}
+                })
+                .then(dataArticle=>{
+                    console.log(dataArticle)
+                    res.status(200).json({msg:'succes',dataArticle})
+                })
+                .catch(err=>{
+                    res.status(400).json(err)
+                })
             })
             .catch(err=>{
                 res.status(400).json(err)
             })
-        })
-        .catch(err=>{
-            res.status(400).json(err)
-        })
+        }else{
+            res.status(400).json('you have to login first')
+        }
+      
     }
+
 
     static deleteComment(req,res){
         let user = req.user

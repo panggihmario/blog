@@ -12,6 +12,7 @@ class Controller{
             user : decoded.id
         })
         .then(article=>{
+            console.log(article)
             res.status(200).json(article)
         })
         .catch(err=>{
@@ -35,8 +36,12 @@ class Controller{
     }
 
     static getOneArticle(req,res){
-        Article.find({
+        Article.findOne({
             _id: req.params.id
+        })
+        .populate('user')
+        .populate({
+            path:'comment',populate:{path:'user'}
         })
         .then(article=>{
             res.status(200).json(article)

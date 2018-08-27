@@ -11,17 +11,23 @@ chai.should()
 var url ="http://localhost:3000"
 
 describe('User',function(){
-    // after(function(done){
-    //     mongoose.connect('mongodb://mario:mario123@ds125602.mlab.com:25602/blog-testing',function(err){
-    //         User.collection.drop()
-    //         done()
-    //     })
-    // })
+    after(function(done){
+        mongoose.connect('mongodb://mario:mario123@ds125602.mlab.com:25602/blog-testing',function(err){
+            User.collection.drop()
+            done()
+        })
+    })
 
     it('POST /users/register should add data user', function(done) {
             chai.request(url)
             .post('/users/register')
-            .send({'name' :"jack","email":"jack@mail.com","password" :"1234"})
+            .send({
+                'email':'tes@mail.com',
+                'name' : 'siapa',
+                'name' :"jack",
+                "email":"jack@mail.com",
+                "password" :"1234",
+            })
             .end(function(err,res){
                 res.should.have.status(200);
                 res.body.should.be.a('object');
@@ -60,6 +66,7 @@ describe('User',function(){
             'title' : 'testing',
             'content':'tescontent',
             'url' :'testingurl',
+            'user' :'1231lk3m'
         })
         .end(function(err,res){
             res.should.have.status(200);

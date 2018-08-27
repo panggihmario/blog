@@ -15,7 +15,7 @@
       v-bind:statusDialog="statusDialog"
       v-on:status-login="checkLogin"
       v-on:close-dialog="close"
-      v-on:data-user="dataUser">
+      v-on:data-login="SignIn">
     </Login>
     <Register 
       v-bind:statusDialogRegist="statusDialogRegist" 
@@ -45,7 +45,11 @@
             v-on:obj-article="editArticle"
             v-on:id-delete="deleteArticle"
             v-on:comment="addComment"
-            v-on:del-comment="deleteComment">
+            v-on:del-comment="deleteComment"
+            v-bind:owner="owner"
+            v-bind:statusLogin="statusLogin"
+            v-bind:errAddComment="errAddComment"
+            v-bind:oneArticle="oneArticle">
           </Mainbar>
         </v-flex>
         <v-flex xs8 v-else>
@@ -60,6 +64,7 @@
       v-on:edit-img="getImgEdit"
       v-on:edit-data="editOldArticle">
     </Edit>
+    <Foot/>
   </main>
   </div>
 </template>
@@ -73,11 +78,12 @@ import Sidebar from '@/components/Sidebar.vue'
 import Mainbar from '@/components/Mainbar.vue'
 import Edit from '@/components/Edit.vue'
 import Carousel from '@/components/Carousel.vue'
+import Foot from '@/components/Foot.vue'
 export default {
   data () {
     return {
       statusDialog: '',
-      statusLogin: '',
+      statusLogin: false,
       statusDialogRegist: '',
       statusDialogArticle: '',
       statusDialogEdit: '',
@@ -88,11 +94,14 @@ export default {
       articles: [],
       username:'',
       dataUrl:'',
-      urlEdit:''
+      urlEdit:'',
+      owner:'',
+      errAddComment:'',
+      oneArticle:{}
     }
   },
   components: {
-    Navbar, Login, Register, Article, Sidebar, Mainbar, Edit, Carousel
+    Navbar, Login, Register, Article, Sidebar, Mainbar, Edit, Carousel, Foot
   },
   methods: {
      getUrl (data) {
@@ -120,6 +129,16 @@ export default {
       this.statusDialogArticle = false
     },
     getId (idArticle) {
+      console.log("masuk gk nihh")
+      if(idArticle !== undefined){
+         axios.get(`http://localhost:3000/article/getOne/${idArticle._id}`)
+        .then(data=>{
+          this.oneArticle = data.data
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }
       this.article =  idArticle
     },
     editDialog (status) {
@@ -137,7 +156,6 @@ export default {
     allArticle () {
       axios.get('http://localhost:3000/article/allArticle')
       .then(allData => {
-        // console.log(allData.data[0])
           this.articles = allData.data
       })
       .catch(err => {
@@ -147,11 +165,9 @@ export default {
     checkLogin (status) {
       this.statusLogin = status
     },
-    checkLogout () {
-      this.statusLogin = false
-    },
-    dataUser (value) {
-      this.username = value
+    checkLogout (status) {
+      status = false
+      this.statusLogin = status
     },
     resetName () {
       this.username = ''
@@ -181,18 +197,19 @@ export default {
         .catch(err => {
           console.log(err)
         })
+        this.title = ''     
     },
-    deleteArticle (value ){
+    deleteArticle (value ) {
       let token = localStorage.getItem('token')
-        axios.delete(`http://localhost:3000/article/delete/${value}`, {
-          headers: {
-            token: token
-          }
-        })
-        .then(data=>{
+      axios.delete(`http://localhost:3000/article/delete/${value}`, {
+        headers: {
+          token: token
+        }
+      })
+        .then(data => {
           console.log(data)
         })
-        .catch(err=>{
+        .catch(err => {
           console.log(err.response)
         })
     },
@@ -223,37 +240,69 @@ export default {
         })
     },
     addComment (value) {
+      console.log(value)
+      let self = this
       let token = localStorage.getItem('token')
-      axios.post(`http://localhost:3000/article/addComment/${value.id}`,{
+      axios.post(`http://localhost:3000/article/addComment/${value.id}`, {
         comment: value.comment
-      },{
+      }, {
         headers: {
           token: token
         }
       })
-      .then(dataComment=>{
-        this.allArticle()
-        console.log(dataComment);
+        .then(dataComment => {
+          self.getId(value.id)
+        })
+        .catch(err => {
+          console.log(err)
+          this.errAddComment = 'you have to login first'
+        })
+    },
+    getOneArticle(id){
+      axios.get(`http://localhost:3000/article/getOne/${id}`)
+      .then(data=>{
+        console.log(data)
+        // this.oneArticle = data.data
       })
       .catch(err=>{
-        console.log(err.response)
+        console.log(err)
       })
     },
     deleteComment (id) {
       let token = localStorage.getItem('token')
-      axios.delete(`http://localhost:3000/article/deleteComment/${id}`,{
+      axios.delete(`http://localhost:3000/article/deleteComment/${id}`, {
         headers: {
           token: token
         }
       })
-      .then(data=>{
-        console.log(data);
+        .then(data => {
+          console.log(data)
+        })
+        .catch(err => {
+          console.log(err.response)
+        })
+    },
+    SignIn (value) {
+      axios.post('http://localhost:3000/users/login', {
+        email: value.email,
+        password: value.password
       })
-      .catch(err=>{
-        console.log(err.response);
-        
-      })
-      
+        .then(data => {
+          let token = data.data.token
+          let name = data.data.dataUser.name
+          localStorage.setItem('token', token)
+          localStorage.setItem('name', name)
+          this.owner = data.data.dataUser._id
+          this.statusLogin = true
+          this.username = name
+          this.close()
+        })
+        .catch(err => {
+          this.msg = err.response.data.msg
+        })
+    },
+    getComment(){
+      console.log(this.article)
     }
   },
   mounted () {
@@ -262,10 +311,21 @@ export default {
     this.closeArticle()
     this.getId()
     this.allArticle()
-    this.dataUser()
+    this.getComment()
   },
-  watch:{
-    articles:'allArticle'
+  watch: {
+    articles: 'allArticle',
+    statusLogin (val) {
+      this.statusLogin = val
+    }
+  },
+  created(){
+    var token = localStorage.getItem('token')
+    var name = localStorage.getItem('name')
+    if(token){
+      this.statusLogin = true
+      this.username = name
+    }
   }
 }
 </script>

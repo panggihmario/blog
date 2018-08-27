@@ -66,24 +66,8 @@ export default {
         this.$emit('close-dialog', this.statusDialog)
     },
     login () {
-      axios.post('http://localhost:3000/users/login', {
-        email: this.email,
-        password: this.password
-      })
-      .then(data=>{
-        let token = data.data.token
-        let name = data.data.dataUser.name
-        localStorage.setItem('token',token)
-        localStorage.setItem('name',name)
-        this.loginstatus = true
-        this.$emit('status-login',this.loginstatus)
-        this.$emit('data-user',data.data.dataUser.name)
-        this.closeDialog()
-      })
-      .catch(err=>{
-        this.msg = err.response.data.msg
-      })
-    }
+      this.$emit('data-login',{email: this.email, password: this.password})
+    },
   }
 }
 </script>

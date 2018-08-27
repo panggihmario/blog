@@ -87,7 +87,7 @@
                         <v-list-tile v-for="(article,index) in articles" :key=index>
                             <v-list-tile-content>
                                 <v-list-tile-title>
-                                  <router-link :to="{name: 'article',params: {id: article.title}}" @click.native="idArticle(article)" class="black--text"> {{article.title}}</router-link>
+                                  <router-link :to="{name: 'article',params: {id: article.title}}" @click.native="idArticle(article)" class="black--text" style="text-decoration:none"> {{article.title}}</router-link>
                                 </v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
@@ -95,7 +95,7 @@
                     </v-card-title>
                   </v-flex>
                 </v-layout>
-                <v-divider light></v-divider> 
+                <v-divider light></v-divider>
               </v-card>
             </v-flex>
           </v-layout>
@@ -107,17 +107,17 @@
 
 <script>
 export default {
-    props: ["allData","articles"],
-    data(){
-        return{
-            statusBar: false
-        }
-    },
+  props: ['allData', 'articles'],
+  data () {
+    return {
+      statusBar: false
+    }
+  },
   methods: {
-    idArticle(id){
-        this.$emit('id-article',id)
-        this.statusBar = true
-        this.$emit('reverse-status',this.statusBar)
+    idArticle (id) {
+      this.$emit('id-article',id)
+      this.statusBar = true
+      this.$emit('reverse-status',this.statusBar)
     },
 },
 }

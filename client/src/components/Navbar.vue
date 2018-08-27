@@ -1,7 +1,9 @@
 <template>
     <v-toolbar class="orange lighten-1">
       <v-toolbar-side-icon></v-toolbar-side-icon>
-      <v-toolbar-title>Title</v-toolbar-title>
+      <v-toolbar-title>
+        <img src="https://www.jogjaview.com/wp-content/uploads/2015/02/logo-baru-jogja-istimewa-608x188.jpg"  style="width:150px;margin-top:7px">
+        </v-toolbar-title>
        <v-toolbar-title v-if="statusLogin"><i class="fas fa-user"></i>  {{username}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items v-if="statusLogin"  class="hidden-sm-and-down">
@@ -17,14 +19,14 @@
 
 <script>
 export default {
-  props:["statusLogin","username"],
+  props: ['statusLogin', 'username'],
   data () {
     return {
       dialog: false,
       dialogRegist: false,
       dialogArticle: false,
-      user:'',
-      checkStatus : false
+      user: '',
+      checkStatus: false
     }
   },
   methods: {
@@ -40,32 +42,28 @@ export default {
       this.dialogArticle = true
       this.$emit('dialog-article', this.dialogArticle)
     },
-    logout(){
-       localStorage.clear()
-      //  this.statusLogin = false
-        this.$emit('check',this.statusLogin)
-        this.$emit('outname',this.username)
-      //  this.username=''
+    logout () {
+      localStorage.clear()
+      this.$emit('check', this.statusLogin)
+      this.$emit('outname', this.username)
     },
-    checkAll(){
+    checkAll () {
       let token = localStorage.getItem('token')
-      if(token){
-        if(this.statusLogin){
+      if (token) {
+        if (this.statusLogin) {
           this.checkStatus = true
         }
       }
     }
   },
-  watch:{
-    user(val){
-      console.log(val);
-      
+  watch: {
+    user (val) {
+      console.log(val)
     }
   },
-  created (){
+  created () {
     this.checkAll()
   }
-
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-    <v-layout>
+    <v-layout row wrap>
         <v-flex xs12 >
             <v-card>
                 <v-card-media
@@ -8,17 +8,37 @@
                 ></v-card-media>
                 <v-card-title primary-title>
                     <div>
-                    <h3 class="headline mb-0">{{article.title}}</h3>
-                    writer : {{article.user.name}}
-                    <p v-html="article.content"></p>
+                    <h3 class="headline mb-0">{{oneArticle.title}}</h3>
+                    writer : {{oneArticle.user.name}}
+                    <p v-html="oneArticle.content"></p>
                     </div>
                 </v-card-title>
-                <v-card-actions>
+                <v-card-actions v-if="owner == oneArticle.user._id && statusLogin">
                     <v-btn flat color="orange" @click="passDialogEdit(article)">Edit</v-btn>
                     <v-btn flat color="orange" @click="deleteArticle(article._id)">Delete</v-btn>
                 </v-card-actions>
             </v-card>
-            <v-container fluid grid-list-md>
+              <br>
+             <v-container grid-list-md text-xs-center> 
+            <v-layout  row wrap>
+                <v-flex xs12  v-for="(comment,index) in oneArticle.comment" :key=index>
+                    <v-card >
+                    <v-card-title primary-title >
+                    <h5 class="headline mb-0">{{comment.user.name}}</h5>
+                    </v-card-title>
+                    <v-card-text>
+          <p class="text-sm-left">{{comment.comment}}</p>
+                    <div></div>
+                    </v-card-text>
+                    <v-card-actions>
+                         <v-spacer></v-spacer>
+                        <a href="#" @click="delComment(comment._id)"><i class="fas fa-trash-alt fa-2x"></i></a>
+                    </v-card-actions>
+                    </v-card>
+                </v-flex>
+            </v-layout>
+             </v-container>
+              <v-container fluid grid-list-md>
                 <v-textarea
                     name="input-7-1"
                     outline
@@ -26,48 +46,38 @@
                     auto-grow
                     v-model="comment"
                 ></v-textarea>
-                <v-btn class="red" @click="dataComment(article._id)">Add Comment</v-btn>
+                <v-btn  outline color="indigo" @click="dataComment(article._id)">Add Comment</v-btn>
+                <div v-if="!statusLogin">
+                {{errAddComment }}
+                </div>
             </v-container>
-            <v-layout>
-                <v-flex xs12 >
-                    <v-card v-for="(comment,index) in article.comment" :key=index>
-                    <v-card-title primary-title >
-                        <div>
-                        <h3 class="headline mb-0">{{comment.user.name}}</h3>
-                        <div>{{comment.comment}}</div>
-                         <v-btn class="red" @click="delComment(comment._id)">Delete</v-btn>
-                        </div>
-                    </v-card-title> 
-                    </v-card>
-                </v-flex>
-            </v-layout>
         </v-flex>
     </v-layout>
 </template>
 
 <script>
 export default {
-  props: ["article"],
+  props: ['article', 'owner', 'statusLogin', 'errAddComment', 'oneArticle'],
   methods: {
     passDialogEdit (article) {
-        this.dialogEdit = true
-        this.$emit('dialog-edit',this.dialogEdit)
-        this.$emit('obj-article',article)
+      this.dialogEdit = true
+      this.$emit('dialog-edit', this.dialogEdit)
+      this.$emit('obj-article', article)
     },
     deleteArticle (id) {
-        this.$emit('id-delete',id)
+        this.$emit('id-delete', id)
     },
     dataComment(id){
-      this.$emit('comment',{id:id,comment:this.comment})
+      this.$emit('comment', {id:id,comment:this.comment})
     },
     delComment(id){
-      this.$emit('del-comment',id)
+      this.$emit('del-comment', id)
     }
   },
   data(){
     return{
         dialogEdit: false,
-        comment:''
+        comment: ''
     }
   }
 }
